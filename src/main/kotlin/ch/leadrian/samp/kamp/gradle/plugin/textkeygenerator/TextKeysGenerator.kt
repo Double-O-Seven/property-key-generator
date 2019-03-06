@@ -1,6 +1,11 @@
 package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 
-import com.squareup.javapoet.*
+import com.squareup.javapoet.AnnotationSpec
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.FieldSpec
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.TypeSpec
 import java.io.Writer
 import javax.annotation.Generated
 import javax.lang.model.element.Modifier
@@ -13,14 +18,18 @@ internal object TextKeysGenerator {
         val rootTypeSpecBuilder = TypeSpec
                 .classBuilder(rootClassName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addAnnotation(AnnotationSpec
-                        .builder(Generated::class.java)
-                        .addMember("value", "\$S", this::class.java.name)
-                        .build())
-                .addMethod(MethodSpec
-                        .constructorBuilder()
-                        .addModifiers(Modifier.PRIVATE)
-                        .build())
+                .addAnnotation(
+                        AnnotationSpec
+                                .builder(Generated::class.java)
+                                .addMember("value", "\$S", this::class.java.name)
+                                .build()
+                )
+                .addMethod(
+                        MethodSpec
+                                .constructorBuilder()
+                                .addModifiers(Modifier.PRIVATE)
+                                .build()
+                )
         getTextKeyTrees(propertyKeys.map { TextKey(it) }).forEach { it.write(rootTypeSpecBuilder) }
         val javaFile = JavaFile
                 .builder(packageName, rootTypeSpecBuilder.build())
@@ -62,10 +71,12 @@ internal object TextKeysGenerator {
                 val nestedTypeSpecBuilder = TypeSpec
                         .classBuilder(segment)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .addMethod(MethodSpec
-                                .constructorBuilder()
-                                .addModifiers(Modifier.PRIVATE)
-                                .build())
+                        .addMethod(
+                                MethodSpec
+                                        .constructorBuilder()
+                                        .addModifiers(Modifier.PRIVATE)
+                                        .build()
+                        )
                 subtrees.forEach { it.write(nestedTypeSpecBuilder) }
                 typeSpecBuilder.addType(nestedTypeSpecBuilder.build())
             }
@@ -79,10 +90,12 @@ internal object TextKeysGenerator {
                         .initializer("\$S", propertyName)
                         .build()
                 typeSpecBuilder.addField(stringFieldSpec)
-                typeSpecBuilder.addField(FieldSpec
-                        .builder(textKeyTypeSpec, segment, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .initializer("new \$T(\$N)", textKeyTypeSpec, stringFieldSpec)
-                        .build())
+                typeSpecBuilder.addField(
+                        FieldSpec
+                                .builder(textKeyTypeSpec, segment, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                                .initializer("new \$T(\$N)", textKeyTypeSpec, stringFieldSpec)
+                                .build()
+                )
             }
         }
     }

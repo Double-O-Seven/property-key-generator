@@ -2,7 +2,6 @@ package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.util.*
 
 open class TextKeysGeneratorPluginExtension {
 

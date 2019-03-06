@@ -22,7 +22,12 @@ internal object StringsPropertiesFileCollector {
                 .walk(resourcesDirectory)
                 .filter { Files.isRegularFile(it) }
                 .filter { TextKeysGeneratorPlugin.STRINGS_FILE_PATTERN.matcher(it.fileName.toString()).matches() }
-                .collect(groupingBy({ file: Path -> resourcesDirectory.relativize(file.parent).joinToString(".") }, toSet<Path>()))
+                .collect(
+                        groupingBy(
+                                { file: Path -> resourcesDirectory.relativize(file.parent).joinToString(".") },
+                                toSet<Path>()
+                        )
+                )
     }
 
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
+import java.util.Locale
 
 internal class StringsPropertiesFileCollectorTest {
 
@@ -17,14 +17,18 @@ internal class StringsPropertiesFileCollectorTest {
         resourcesDirectory.createStringsPropertiesFile("ch.foo.lol")
         resourcesDirectory.createStringsPropertiesFile("ch.foo.rofl", Locale.ENGLISH)
 
-        val stringsPropertiesFilesByPackageName = StringsPropertiesFileCollector.getStringsPropertyFilesByPackageName(listOf(resourcesDirectory))
+        val stringsPropertiesFilesByPackageName = StringsPropertiesFileCollector.getStringsPropertyFilesByPackageName(
+                listOf(resourcesDirectory)
+        )
 
         assertThat(stringsPropertiesFilesByPackageName)
                 .containsOnly(
-                        entry("ch.foo.bar", setOf(
+                        entry(
+                                "ch.foo.bar", setOf(
                                 resourcesDirectory.resolve("ch/foo/bar/strings_de_DE.properties"),
                                 resourcesDirectory.resolve("ch/foo/bar/strings.properties")
-                        )),
+                        )
+                        ),
                         entry("ch.foo.lol", setOf(resourcesDirectory.resolve("ch/foo/lol/strings.properties"))),
                         entry("ch.foo.rofl", setOf(resourcesDirectory.resolve("ch/foo/rofl/strings_en.properties")))
                 )

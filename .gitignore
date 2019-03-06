@@ -6,3 +6,5 @@ out
 .classpath
 .idea
 **/.settings/*
+!.idea/codeStyles/Project.xml
+!.idea/codeStyles/codeStyleConfig.xml

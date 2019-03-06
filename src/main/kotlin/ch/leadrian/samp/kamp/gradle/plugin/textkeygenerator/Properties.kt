@@ -3,7 +3,7 @@ package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
+import java.util.Properties
 
 internal fun Path.loadProperties(charset: Charset): Properties {
     val properties = Properties()

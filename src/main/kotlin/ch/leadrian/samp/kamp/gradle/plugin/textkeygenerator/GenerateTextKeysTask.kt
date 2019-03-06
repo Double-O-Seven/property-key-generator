@@ -74,7 +74,8 @@ open class GenerateTextKeysTask : DefaultTask() {
     }
 
     private fun getOutputDirectory(packageName: String): Path {
-        val generatedSourceDirectory = project.buildDir.toPath().resolve(TextKeysGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
+        val generatedSourceDirectory = project.buildDir.toPath()
+                .resolve(TextKeysGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
         return generatedSourceDirectory.resolve(packageNameToPath(packageName))
     }
 
