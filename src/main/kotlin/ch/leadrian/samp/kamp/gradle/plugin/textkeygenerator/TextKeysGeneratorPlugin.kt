@@ -20,10 +20,10 @@ open class TextKeysGeneratorPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        applyJavaPlugin(project)
         createExtension(project)
         configureTask(project)
         configureSourceSets(project)
-        applyJavaPlugin(project)
     }
 
     private fun createExtension(project: Project) {
