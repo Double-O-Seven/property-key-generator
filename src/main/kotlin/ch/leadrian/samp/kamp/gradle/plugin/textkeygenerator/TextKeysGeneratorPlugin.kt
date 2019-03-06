@@ -1,19 +1,20 @@
 package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 
-import org.gradle.api.NonNullApi
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.regex.Pattern
 
-@NonNullApi
 open class TextKeysGeneratorPlugin : Plugin<Project> {
 
     companion object {
 
         const val GENERATED_SOURCE_DIRECTORY = "generated-src/main/java"
+
+        val STRINGS_FILE_PATTERN: Pattern = Pattern.compile("strings(_[a-z]{2}(_[A-Z]{2})?)?\\.properties")
 
     }
 

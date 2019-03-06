@@ -5,15 +5,11 @@ import java.io.Writer
 import javax.annotation.Generated
 import javax.lang.model.element.Modifier
 
-class TextKeysGenerator {
+internal object TextKeysGenerator {
 
-    companion object {
+    private val textKeyTypeSpec = ClassName.get("ch.leadrian.samp.kamp.core.api.text", "TextKey")
 
-        private val textKeyTypeSpec = ClassName.get("ch.leadrian.samp.kamp.core.api.text", "TextKey")
-    }
-
-    @Generated
-    fun generateTextKeyClasses(rootClassName: String, packageName: String, stringPropertyNames: Set<String>, writer: Writer) {
+    fun generateTextKeyClasses(rootClassName: String, packageName: String, propertyKeys: Set<String>, writer: Writer) {
         val rootTypeSpecBuilder = TypeSpec
                 .classBuilder(rootClassName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -25,7 +21,7 @@ class TextKeysGenerator {
                         .constructorBuilder()
                         .addModifiers(Modifier.PRIVATE)
                         .build())
-        getTextKeyTrees(stringPropertyNames.map { TextKey(it) }).forEach { it.write(rootTypeSpecBuilder) }
+        getTextKeyTrees(propertyKeys.map { TextKey(it) }).forEach { it.write(rootTypeSpecBuilder) }
         val javaFile = JavaFile
                 .builder(packageName, rootTypeSpecBuilder.build())
                 .skipJavaLangImports(true)

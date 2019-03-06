@@ -20,12 +20,10 @@ internal class TextKeysGeneratorTest {
             expectedClassString: String
     ) {
         StringWriter().use { writer ->
-            val textKeysGenerator = TextKeysGenerator()
-
-            textKeysGenerator.generateTextKeyClasses(
+            TextKeysGenerator.generateTextKeyClasses(
                     rootClassName = rootClassName,
                     packageName = packageName,
-                    stringPropertyNames = stringPropertyNames,
+                    propertyKeys = stringPropertyNames,
                     writer = writer
             )
 

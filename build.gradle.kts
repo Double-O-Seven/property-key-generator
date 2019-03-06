@@ -33,11 +33,11 @@ dependencies {
 
     api(gradleApi())
 
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.3.2")
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = "5.3.2")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.4.0")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = "5.4.0")
     testImplementation(group = "org.assertj", name = "assertj-core", version = "3.11.1")
 
-    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.2")
+    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.4.0")
 }
 
 val gitVersion: Closure<String> by extra

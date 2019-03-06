@@ -3,33 +3,21 @@ package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectories
+import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.io.IOException
-import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
-import java.util.*
-import java.util.regex.Pattern.compile
-import kotlin.streams.toList
 
 open class GenerateTextKeysTask : DefaultTask() {
 
-    companion object {
-
-        private val STRINGS_FILE_PATTERN = compile("strings(_[a-z]{2}(_[A-Z]{2})?)?\\.properties")
+    private val extension: TextKeysGeneratorPluginExtension by lazy {
+        project.extensions.getByType(TextKeysGeneratorPluginExtension::class.java)
     }
 
-    init {
-        doLast { generateTextKeys() }
-    }
-
-    private val extension: TextKeysGeneratorPluginExtension
-        get() = project.extensions.getByType(TextKeysGeneratorPluginExtension::class.java)
-
-    private val resourcesDirectories: Set<File> by lazy {
+    private val resourcesDirectories: List<Path> by lazy {
         project
                 .convention
                 .findPlugin(JavaPluginConvention::class.java)
@@ -38,79 +26,56 @@ open class GenerateTextKeysTask : DefaultTask() {
                 ?.resources
                 ?.sourceDirectories
                 ?.files
+                ?.map { it.toPath() }
                 .orEmpty()
     }
 
+    private val stringsPropertiesFilesByPackageName: Map<String, Collection<Path>> by lazy {
+        StringsPropertiesFileCollector.getStringsPropertyFilesByPackageName(resourcesDirectories)
+    }
+
     @InputFiles
-    fun getInputFiles(): List<File> {
-        return extension.packageNames.flatMap { packageName ->
-            getStringsPropertiesFiles(resourcesDirectories, packageName)
-        }
-    }
+    fun getInputFiles(): List<Path> = stringsPropertiesFilesByPackageName.values.flatten()
 
-    @OutputDirectories
-    fun getOutputDirectories(): List<File> = extension.packageNames.map { this.getOutputDirectory(it) }
-
-    private fun generateTextKeys() {
-        val extension = extension
-        extension.packageNames.forEach { packageName ->
-            val stringsPropertiesFiles = getStringsPropertiesFiles(resourcesDirectories, packageName)
-            try {
-                generateTextKeys(packageName, stringsPropertiesFiles)
-            } catch (e: IOException) {
-                throw UncheckedIOException(e)
+    @OutputFiles
+    fun getOutputFiles(): List<Path> =
+            stringsPropertiesFilesByPackageName.keys.map { packageName ->
+                getOutputDirectory(packageName).resolve("${extension.className}.java")
             }
+
+    @TaskAction
+    fun generateTextKeys() {
+        stringsPropertiesFilesByPackageName.forEach { packageName, stringsPropertiesFiles ->
+            generateTextKeys(packageName, stringsPropertiesFiles)
         }
     }
 
-    @Throws(IOException::class)
-    private fun generateTextKeys(packageName: String, stringsPropertiesFiles: List<File>) {
-        val stringPropertyNames = stringsPropertiesFiles
-                .map { it.toPath() }
-                .map { this.loadProperties(it) }
-                .flatMap { it.stringPropertyNames() }
-                .toSet()
-        val textKeysGenerator = TextKeysGenerator()
-        val outputDirectory = getOutputDirectory(packageName).toPath()
-
+    private fun generateTextKeys(packageName: String, stringsPropertiesFiles: Collection<Path>) {
+        val propertyKeys = getPropertyKeys(stringsPropertiesFiles)
+        val outputDirectory = getOutputDirectory(packageName)
         Files.createDirectories(outputDirectory)
-        val outputFile = outputDirectory.resolve("${extension.className}.java")
-        Files.newBufferedWriter(outputFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { writer ->
-            textKeysGenerator.generateTextKeyClasses(
+        val textKeysJavaFile = outputDirectory.resolve("${extension.className}.java")
+
+        Files.newBufferedWriter(textKeysJavaFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { writer ->
+            TextKeysGenerator.generateTextKeyClasses(
                     rootClassName = extension.className,
                     packageName = packageName,
-                    stringPropertyNames = stringPropertyNames,
+                    propertyKeys = propertyKeys,
                     writer = writer
             )
         }
     }
 
-    private fun getStringsPropertiesFiles(resourceDirectores: Set<File>, packageName: String): List<File> {
-        val packagePath = packageNameToPath(packageName)
-        return resourceDirectores
-                .flatMap { resourceDirectory ->
-                    Files
-                            .list(resourceDirectory.toPath().resolve(packagePath))
-                            .filter { Files.isRegularFile(it) }
-                            .filter { path -> STRINGS_FILE_PATTERN.matcher(path.fileName.toString()).matches() }
-                            .map { it.toFile() }
-                            .toList()
-                }
+    private fun getPropertyKeys(stringsPropertiesFiles: Collection<Path>): Set<String> {
+        return stringsPropertiesFiles
+                .map { it.loadProperties(extension.charset) }
+                .flatMap { it.stringPropertyNames() }
+                .toSet()
     }
 
-    private fun loadProperties(path: Path): Properties {
-        val properties = Properties()
-        try {
-            Files.newBufferedReader(path, extension.charset).use { reader -> properties.load(reader) }
-        } catch (e: IOException) {
-            throw UncheckedIOException(e)
-        }
-        return properties
-    }
-
-    private fun getOutputDirectory(packageName: String): File {
-        val outputDirectory = project.buildDir.resolve(TextKeysGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
-        return File(outputDirectory, packageNameToPath(packageName))
+    private fun getOutputDirectory(packageName: String): Path {
+        val generatedSourceDirectory = project.buildDir.toPath().resolve(TextKeysGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
+        return generatedSourceDirectory.resolve(packageNameToPath(packageName))
     }
 
     private fun packageNameToPath(packageName: String): String = packageName.replace('.', File.separatorChar)
