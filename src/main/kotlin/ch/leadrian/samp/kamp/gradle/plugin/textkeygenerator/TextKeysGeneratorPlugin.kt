@@ -2,6 +2,7 @@ package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
@@ -22,6 +23,7 @@ open class TextKeysGeneratorPlugin : Plugin<Project> {
         createExtension(project)
         configureTask(project)
         configureSourceSets(project)
+        applyJavaPlugin(project)
     }
 
     private fun createExtension(project: Project) {
@@ -42,5 +44,9 @@ open class TextKeysGeneratorPlugin : Plugin<Project> {
                 ?.getByName(SourceSet.MAIN_SOURCE_SET_NAME)
                 ?.java
                 ?.srcDir(project.buildDir.resolve(GENERATED_SOURCE_DIRECTORY))
+    }
+
+    private fun applyJavaPlugin(project: Project) {
+        project.pluginManager.apply(JavaPlugin::class.java)
     }
 }
