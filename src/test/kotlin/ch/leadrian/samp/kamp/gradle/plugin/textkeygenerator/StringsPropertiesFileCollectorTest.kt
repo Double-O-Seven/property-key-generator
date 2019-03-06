@@ -26,7 +26,7 @@ internal class StringsPropertiesFileCollectorTest {
                                 resourcesDirectory.resolve("ch/foo/bar/strings.properties")
                         )),
                         entry("ch.foo.lol", setOf(resourcesDirectory.resolve("ch/foo/lol/strings.properties"))),
-                        entry("ch.foo.rofl", setOf(resourcesDirectory.resolve("ch/foo/rofl/strings_EN.properties")))
+                        entry("ch.foo.rofl", setOf(resourcesDirectory.resolve("ch/foo/rofl/strings_en.properties")))
                 )
     }
 
