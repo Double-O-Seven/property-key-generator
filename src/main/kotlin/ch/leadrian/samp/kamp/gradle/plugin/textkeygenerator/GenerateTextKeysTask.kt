@@ -3,6 +3,7 @@ package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
@@ -13,7 +14,8 @@ import java.nio.file.StandardOpenOption
 
 open class GenerateTextKeysTask : DefaultTask() {
 
-    private val extension: TextKeysGeneratorPluginExtension by lazy {
+    @get:Nested
+    internal val extension: TextKeysGeneratorPluginExtension by lazy {
         project.extensions.getByType(TextKeysGeneratorPluginExtension::class.java)
     }
 
@@ -68,7 +70,7 @@ open class GenerateTextKeysTask : DefaultTask() {
 
     private fun getPropertyKeys(stringsPropertiesFiles: Collection<Path>): Set<String> {
         return stringsPropertiesFiles
-                .map { it.loadProperties(extension.charset) }
+                .map { it.loadProperties() }
                 .flatMap { it.stringPropertyNames() }
                 .toSet()
     }

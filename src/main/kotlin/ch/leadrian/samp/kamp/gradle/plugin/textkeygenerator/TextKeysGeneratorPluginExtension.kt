@@ -1,11 +1,10 @@
 package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
 
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
+import org.gradle.api.tasks.Input
 
 open class TextKeysGeneratorPluginExtension {
 
+    @get:Input
     var className: String = "TextKeys"
 
-    var charset: Charset = StandardCharsets.ISO_8859_1
 }
