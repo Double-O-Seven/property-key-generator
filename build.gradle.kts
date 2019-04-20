@@ -86,7 +86,7 @@ gradlePlugin {
     plugins {
         create("kampTextKeyGeneratorPlugin") {
             id = "ch.leadrian.samp.kamp.kamp-textkey-generator"
-            implementationClass = "ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeyGeneratorPlugin"
+            implementationClass = "ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeysGeneratorPlugin"
         }
     }
 }
