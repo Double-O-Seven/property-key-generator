@@ -14,10 +14,12 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.3.11"
     `java-library`
+    `java-gradle-plugin`
     `maven-publish`
     maven
     signing
     `build-scan`
+    id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.dokka") version "0.9.17"
     id("com.palantir.git-version") version "0.12.0-rc2"
 }
@@ -77,6 +79,28 @@ tasks {
 
     dokka {
         reportUndocumented = false
+    }
+}
+
+gradlePlugin {
+    plugins {
+        create("kampTextKeyGeneratorPlugin") {
+            id = "ch.leadrian.samp.kamp.kamp-textkey-generator"
+            implementationClass = "ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeyGeneratorPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/Double-O-Seven/kamp-textkey-generator"
+    vcsUrl = "https://github.com/Double-O-Seven/kamp-textkey-generator"
+    description = "Gradle plugin to generate text keys for Kamp from property files"
+    tags = listOf("samp")
+
+    (plugins) {
+        "kampTextKeyGeneratorPlugin" {
+            displayName = "Kamp TextKey Generator plugin"
+        }
     }
 }
 
