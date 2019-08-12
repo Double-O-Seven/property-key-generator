@@ -1,11 +1,11 @@
 import groovy.lang.Closure
 
 plugins {
-    kotlin("jvm") version "1.3.11"
+    kotlin("jvm") version "1.3.41"
     `java-library`
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") version "0.10.1"
-    id("org.jetbrains.dokka") version "0.9.17"
+    id("org.jetbrains.dokka") version "0.9.18"
     id("com.palantir.git-version") version "0.12.0-rc2"
 }
 
@@ -13,18 +13,21 @@ repositories {
     mavenCentral()
 }
 
+val kotlinVersion = "1.3.41"
+val junitVersion = "5.5.1"
+
 dependencies {
-    implementation(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = "1.3.11")
-    implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = "1.3.11")
+    implementation(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = kotlinVersion)
+    implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlinVersion)
     implementation(group = "com.squareup", name = "javapoet", version = "1.11.1")
 
     api(gradleApi())
 
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.4.0")
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = "5.4.0")
-    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.11.1")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = junitVersion)
+    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.13.2")
 
-    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.4.0")
+    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)
 }
 
 val gitVersion: Closure<String> by extra
