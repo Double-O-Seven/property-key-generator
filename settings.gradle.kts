@@ -1,1 +1,1 @@
-rootProject.name = "kamp-textkey-generator"
+rootProject.name = "property-textkey-generator"

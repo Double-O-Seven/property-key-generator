@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -21,7 +21,7 @@ internal object StringsPropertiesFileCollector {
         return Files
                 .walk(resourcesDirectory)
                 .filter { Files.isRegularFile(it) }
-                .filter { TextKeysGeneratorPlugin.STRINGS_FILE_PATTERN.matcher(it.fileName.toString()).matches() }
+                .filter { PropertyKeyGeneratorPlugin.STRINGS_FILE_PATTERN.matcher(it.fileName.toString()).matches() }
                 .collect(
                         groupingBy(
                                 { file: Path -> resourcesDirectory.relativize(file.parent).joinToString(".") },

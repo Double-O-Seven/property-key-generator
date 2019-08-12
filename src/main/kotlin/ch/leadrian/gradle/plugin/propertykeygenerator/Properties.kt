@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files

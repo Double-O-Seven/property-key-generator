@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -9,7 +9,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.regex.Pattern
 
-open class TextKeysGeneratorPlugin : Plugin<Project> {
+open class PropertyKeyGeneratorPlugin : Plugin<Project> {
 
     companion object {
 
@@ -27,11 +27,11 @@ open class TextKeysGeneratorPlugin : Plugin<Project> {
     }
 
     private fun createExtension(project: Project) {
-        project.extensions.create("textKeyGenerator", TextKeysGeneratorPluginExtension::class.java)
+        project.extensions.create("textKeyGenerator", PropertyKeyGeneratorPluginExtension::class.java)
     }
 
     private fun configureTask(project: Project) {
-        val generateTextKeysTask = project.tasks.create("generateTextKeys", GenerateTextKeysTask::class.java)
+        val generateTextKeysTask = project.tasks.create("generateTextKeys", GeneratePropertyKeys::class.java)
         project.tasks.withType(JavaCompile::class.java) { it.dependsOn(generateTextKeysTask) }
         project.tasks.withType(KotlinCompile::class.java) { it.dependsOn(generateTextKeysTask) }
     }

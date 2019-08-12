@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import com.squareup.javapoet.AnnotationSpec
 import com.squareup.javapoet.ClassName
@@ -10,7 +10,7 @@ import java.io.Writer
 import javax.annotation.Generated
 import javax.lang.model.element.Modifier
 
-internal object TextKeysGenerator {
+internal object PropertyKeyGenerator {
 
     private val textKeyTypeSpec = ClassName.get("ch.leadrian.samp.kamp.core.api.text", "TextKey")
 
@@ -48,14 +48,14 @@ internal object TextKeysGenerator {
             if (groupedTextKeys.size == 1) {
                 groupedTextKeys.first().apply {
                     subtreesBySegment += when {
-                        propertyNameSegments.isEmpty() -> listOf(TextKeyTree.Leaf(segment, propertyName))
-                        else -> listOf(TextKeyTree.Node(segment, getTextKeyTrees(listOf(this))))
+                        propertyNameSegments.isEmpty() -> listOf(PropertyKeyGenerator.TextKeyTree.Leaf(segment, propertyName))
+                        else -> listOf(PropertyKeyGenerator.TextKeyTree.Node(segment, getTextKeyTrees(listOf(this))))
                     }
                 }
             } else {
                 val leaf = groupedTextKeys.find { it.propertyNameSegments.isEmpty() }
                 if (leaf != null) throw IllegalStateException("Property ${leaf.propertyName} cannot be a prefix of other properties")
-                subtreesBySegment += listOf(TextKeyTree.Node(segment, getTextKeyTrees(groupedTextKeys)))
+                subtreesBySegment += listOf(PropertyKeyGenerator.TextKeyTree.Node(segment, getTextKeyTrees(groupedTextKeys)))
             }
         }
         return subtreesBySegment

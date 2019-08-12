@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 import java.io.StringWriter
 import java.util.stream.Stream
 
-internal class TextKeysGeneratorTest {
+internal class PropertyKeyGeneratorTest {
 
     @ParameterizedTest
     @ArgumentsSource(GenerateTextKeyClassesArgumentsProvider::class)
@@ -20,7 +20,7 @@ internal class TextKeysGeneratorTest {
             expectedClassString: String
     ) {
         StringWriter().use { writer ->
-            TextKeysGenerator.generateTextKeyClasses(
+            PropertyKeyGenerator.generateTextKeyClasses(
                     rootClassName = rootClassName,
                     packageName = packageName,
                     propertyKeys = stringPropertyNames,
@@ -41,7 +41,7 @@ internal class TextKeysGeneratorTest {
                         stringPropertyNames = setOf(),
                         expectedClassString = ("package ch.leadrian.samp.kamp.core.api.text.test;\n\n" +
                                 "import javax.annotation.Generated;\n\n" +
-                                "@Generated(\"ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeysGenerator\")\n" +
+                                "@Generated(\"ch.leadrian.gradle.plugin.propertykeygenerator.PropertyKeyGenerator\")\n" +
                                 "public final class TextKeys {\n" +
                                 "  private TextKeys() {\n" +
                                 "  }\n" +
@@ -54,7 +54,7 @@ internal class TextKeysGeneratorTest {
                         expectedClassString = ("package ch.leadrian.samp.kamp.core.api.text.test;\n\n" +
                                 "import ch.leadrian.samp.kamp.core.api.text.TextKey;\n" +
                                 "import javax.annotation.Generated;\n\n" +
-                                "@Generated(\"ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeysGenerator\")\n" +
+                                "@Generated(\"ch.leadrian.gradle.plugin.propertykeygenerator.PropertyKeyGenerator\")\n" +
                                 "public final class TextKeys {\n" +
                                 "  public static final String test_ = \"test\";\n\n" +
                                 "  public static final TextKey test = new TextKey(test_);\n\n" +
@@ -69,7 +69,7 @@ internal class TextKeysGeneratorTest {
                         expectedClassString = ("package ch.leadrian.samp.kamp.core.api.text.test;\n\n" +
                                 "import ch.leadrian.samp.kamp.core.api.text.TextKey;\n" +
                                 "import javax.annotation.Generated;\n\n" +
-                                "@Generated(\"ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeysGenerator\")\n" +
+                                "@Generated(\"ch.leadrian.gradle.plugin.propertykeygenerator.PropertyKeyGenerator\")\n" +
                                 "public final class TextKeys {\n" +
                                 "  public static final String test1_ = \"test1\";\n\n" +
                                 "  public static final TextKey test1 = new TextKey(test1_);\n\n" +
@@ -92,7 +92,7 @@ internal class TextKeysGeneratorTest {
                         expectedClassString = ("package ch.leadrian.samp.kamp.core.api.text.test;\n\n" +
                                 "import ch.leadrian.samp.kamp.core.api.text.TextKey;\n" +
                                 "import javax.annotation.Generated;\n\n" +
-                                "@Generated(\"ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator.TextKeysGenerator\")\n" +
+                                "@Generated(\"ch.leadrian.gradle.plugin.propertykeygenerator.PropertyKeyGenerator\")\n" +
                                 "public final class TextKeys {\n" +
                                 "  public static final String test1_ = \"test1\";\n\n" +
                                 "  public static final TextKey test1 = new TextKey(test1_);\n\n" +

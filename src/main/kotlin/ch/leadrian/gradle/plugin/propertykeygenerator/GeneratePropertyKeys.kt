@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.JavaPluginConvention
@@ -12,11 +12,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
-open class GenerateTextKeysTask : DefaultTask() {
+open class GeneratePropertyKeys : DefaultTask() {
 
     @get:Nested
-    internal val extension: TextKeysGeneratorPluginExtension by lazy {
-        project.extensions.getByType(TextKeysGeneratorPluginExtension::class.java)
+    internal val extension: PropertyKeyGeneratorPluginExtension by lazy {
+        project.extensions.getByType(PropertyKeyGeneratorPluginExtension::class.java)
     }
 
     private val resourcesDirectories: List<Path> by lazy {
@@ -59,7 +59,7 @@ open class GenerateTextKeysTask : DefaultTask() {
         val textKeysJavaFile = outputDirectory.resolve("${extension.className}.java")
 
         Files.newBufferedWriter(textKeysJavaFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { writer ->
-            TextKeysGenerator.generateTextKeyClasses(
+            PropertyKeyGenerator.generateTextKeyClasses(
                     rootClassName = extension.className,
                     packageName = packageName,
                     propertyKeys = propertyKeys,
@@ -77,7 +77,7 @@ open class GenerateTextKeysTask : DefaultTask() {
 
     private fun getOutputDirectory(packageName: String): Path {
         val generatedSourceDirectory = project.buildDir.toPath()
-                .resolve(TextKeysGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
+                .resolve(PropertyKeyGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
         return generatedSourceDirectory.resolve(packageNameToPath(packageName))
     }
 

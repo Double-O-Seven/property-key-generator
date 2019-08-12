@@ -1,4 +1,4 @@
-package ch.leadrian.samp.kamp.gradle.plugin.textkeygenerator
+package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
