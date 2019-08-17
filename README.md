@@ -150,6 +150,11 @@ propertyKeyGenerator {
         // Don't generate wrapper classes, only generate plain String constants
     }
 
+    // Specify another resourceBundle
+    resourceBundle("more-translations") {
+        packageName = "org.mycompany.i18n"
+    }
+
 }
 ```
 
