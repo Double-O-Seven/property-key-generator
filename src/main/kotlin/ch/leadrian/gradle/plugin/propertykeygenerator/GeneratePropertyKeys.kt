@@ -1,86 +1,83 @@
 package ch.leadrian.gradle.plugin.propertykeygenerator
 
+import ch.leadrian.gradle.plugin.propertykeygenerator.model.PropertyKey
+import ch.leadrian.gradle.plugin.propertykeygenerator.model.PropertyKeyTree
 import org.gradle.api.DefaultTask
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFiles
-import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import java.io.BufferedWriter
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
+import java.io.FileWriter
 
-open class GeneratePropertyKeys : DefaultTask() {
+open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
 
-    @get:Nested
-    internal val extension: PropertyKeyGeneratorPluginExtension by lazy {
-        project.extensions.getByType(PropertyKeyGeneratorPluginExtension::class.java)
-    }
+    @get:Input
+    override lateinit var bundleName: String
 
-    private val resourcesDirectories: List<Path> by lazy {
-        project
-                .convention
-                .findPlugin(JavaPluginConvention::class.java)
-                ?.sourceSets
-                ?.getByName(SourceSet.MAIN_SOURCE_SET_NAME)
-                ?.resources
-                ?.sourceDirectories
-                ?.files
-                ?.map { it.toPath() }
-                .orEmpty()
-    }
+    @get:[Optional Input]
+    override var className: String? = null
 
-    private val stringsPropertiesFilesByPackageName: Map<String, Collection<Path>> by lazy {
-        StringsPropertiesFileCollector.getStringsPropertyFilesByPackageName(resourcesDirectories)
-    }
+    @get:Input
+    override var resourceBundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
 
-    @InputFiles
-    fun getInputFiles(): List<Path> = stringsPropertiesFilesByPackageName.values.flatten()
+    @get:Input
+    override lateinit var packageName: String
 
-    @OutputFiles
-    fun getOutputFiles(): List<Path> =
-            stringsPropertiesFilesByPackageName.keys.map { packageName ->
-                getOutputDirectory(packageName).resolve("${extension.className}.java")
-            }
+    @get:[Optional Input]
+    override var pattern: String? = null
+
+    @get:[Optional Nested]
+    override var wrapperClass: WrapperClassConfiguration? = null
+
+    @get:Input
+    override var pathVariableName: String = PropertyKeyGenerationSpec.DEFAULT_PATH_VARIABLE_NAME
+
+    @get:OutputDirectory
+    internal val outputDirectory: File
+        get() = project.buildDir.resolve(PropertyKeyGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
+
+    @get:InputFiles
+    internal val inputFiles: List<File>
+        get() = PropertiesFilesResolver.resolve(ResourceDirectoriesResolver.resolve(project), this)
+
+    @get:OutputFile
+    internal val outputFile: File
+        get() {
+            return outputDirectory
+                    .resolve(packageName.replace('.', File.separatorChar))
+                    .resolve("${PropertyKeysClassNameResolver.resolve(this)}.java")
+        }
 
     @TaskAction
-    fun generateTextKeys() {
-        stringsPropertiesFilesByPackageName.forEach { packageName, stringsPropertiesFiles ->
-            generateTextKeys(packageName, stringsPropertiesFiles)
+    fun generatePropertyKeys() {
+        outputFile.parentFile.mkdirs()
+        val propertyKeyTree = buildPropertyKeyTree()
+        BufferedWriter(FileWriter(outputFile, false)).use { writer ->
+            PropertyKeyGenerator(this, propertyKeyTree).generatePropertyKeyRootClass(writer)
         }
     }
 
-    private fun generateTextKeys(packageName: String, stringsPropertiesFiles: Collection<Path>) {
-        val propertyKeys = getPropertyKeys(stringsPropertiesFiles)
-        val outputDirectory = getOutputDirectory(packageName)
-        Files.createDirectories(outputDirectory)
-        val textKeysJavaFile = outputDirectory.resolve("${extension.className}.java")
-
-        Files.newBufferedWriter(textKeysJavaFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { writer ->
-            PropertyKeyGenerator.generateTextKeyClasses(
-                    rootClassName = extension.className,
-                    packageName = packageName,
-                    propertyKeys = propertyKeys,
-                    writer = writer
-            )
-        }
-    }
-
-    private fun getPropertyKeys(stringsPropertiesFiles: Collection<Path>): Set<String> {
-        return stringsPropertiesFiles
-                .map { it.loadProperties() }
-                .flatMap { it.stringPropertyNames() }
+    private fun buildPropertyKeyTree(): PropertyKeyTree {
+        val propertyKeys = inputFiles.map { it.loadProperties() }
+                .flatMap { it.keys }
+                .map { PropertyKey(it.toString()) }
                 .toSet()
+        return PropertyKeyTree.InternalNode().apply { putAll(propertyKeys) }
     }
 
-    private fun getOutputDirectory(packageName: String): Path {
-        val generatedSourceDirectory = project.buildDir.toPath()
-                .resolve(PropertyKeyGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
-        return generatedSourceDirectory.resolve(packageNameToPath(packageName))
+    fun with(spec: PropertyKeyGenerationSpec) {
+        bundleName = spec.bundleName
+        className = spec.className
+        resourceBundleNameCaseFormat = spec.resourceBundleNameCaseFormat
+        packageName = spec.packageName
+        pattern = spec.pattern
+        wrapperClass = spec.wrapperClass
+        pathVariableName = spec.pathVariableName
     }
-
-    private fun packageNameToPath(packageName: String): String = packageName.replace('.', File.separatorChar)
 
 }

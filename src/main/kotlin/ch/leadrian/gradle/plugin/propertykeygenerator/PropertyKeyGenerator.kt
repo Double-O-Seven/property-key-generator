@@ -1,5 +1,6 @@
 package ch.leadrian.gradle.plugin.propertykeygenerator
 
+import ch.leadrian.gradle.plugin.propertykeygenerator.model.PropertyKeyTree
 import com.squareup.javapoet.AnnotationSpec
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.FieldSpec
@@ -10,98 +11,85 @@ import java.io.Writer
 import javax.annotation.Generated
 import javax.lang.model.element.Modifier
 
-internal object PropertyKeyGenerator {
+internal class PropertyKeyGenerator(
+        private val spec: PropertyKeyGenerationSpec,
+        private val propertyKeyTree: PropertyKeyTree
+) {
 
-    private val textKeyTypeSpec = ClassName.get("ch.leadrian.samp.kamp.core.api.text", "TextKey")
-
-    fun generateTextKeyClasses(rootClassName: String, packageName: String, propertyKeys: Set<String>, writer: Writer) {
-        val rootTypeSpecBuilder = TypeSpec
-                .classBuilder(rootClassName)
+    fun generatePropertyKeyRootClass(writer: Writer) {
+        val rootClass = TypeSpec
+                .classBuilder(ClassName.get(spec.packageName, PropertyKeysClassNameResolver.resolve(spec)))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addAnnotation(
-                        AnnotationSpec
-                                .builder(Generated::class.java)
-                                .addMember("value", "\$S", this::class.java.name)
-                                .build()
-                )
-                .addMethod(
-                        MethodSpec
-                                .constructorBuilder()
-                                .addModifiers(Modifier.PRIVATE)
-                                .build()
-                )
-        getTextKeyTrees(propertyKeys.map { TextKey(it) }).forEach { it.write(rootTypeSpecBuilder) }
-        val javaFile = JavaFile
-                .builder(packageName, rootTypeSpecBuilder.build())
+                .addPrivateConstructor()
+                .addGeneratedAnnotation()
+                .addDeclarations(propertyKeyTree)
+                .build()
+        JavaFile
+                .builder(spec.packageName, rootClass)
                 .skipJavaLangImports(true)
                 .build()
-        javaFile.writeTo(writer)
+                .writeTo(writer)
     }
 
-    private fun getTextKeyTrees(textKeys: List<TextKey>): List<TextKeyTree> {
-        val textKeysByFirstSegment = textKeys.groupBy(
-                keySelector = { it.propertyNameSegments.first() },
-                valueTransform = { it.copy(propertyNameSegments = it.propertyNameSegments.drop(1)) }
-        )
-        val subtreesBySegment = mutableListOf<TextKeyTree>()
-        textKeysByFirstSegment.toSortedMap().forEach { segment, groupedTextKeys ->
-            if (groupedTextKeys.size == 1) {
-                groupedTextKeys.first().apply {
-                    subtreesBySegment += when {
-                        propertyNameSegments.isEmpty() -> listOf(PropertyKeyGenerator.TextKeyTree.Leaf(segment, propertyName))
-                        else -> listOf(PropertyKeyGenerator.TextKeyTree.Node(segment, getTextKeyTrees(listOf(this))))
-                    }
-                }
-            } else {
-                val leaf = groupedTextKeys.find { it.propertyNameSegments.isEmpty() }
-                if (leaf != null) throw IllegalStateException("Property ${leaf.propertyName} cannot be a prefix of other properties")
-                subtreesBySegment += listOf(PropertyKeyGenerator.TextKeyTree.Node(segment, getTextKeyTrees(groupedTextKeys)))
-            }
-        }
-        return subtreesBySegment
+    private fun TypeSpec.Builder.addPrivateConstructor(): TypeSpec.Builder {
+        return addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
     }
 
-    private sealed class TextKeyTree(val segment: String) {
-
-        abstract fun write(typeSpecBuilder: TypeSpec.Builder)
-
-        class Node(segment: String, val subtrees: List<TextKeyTree>) : TextKeyTree(segment) {
-
-            override fun write(typeSpecBuilder: TypeSpec.Builder) {
-                val nestedTypeSpecBuilder = TypeSpec
-                        .classBuilder(segment)
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .addMethod(
-                                MethodSpec
-                                        .constructorBuilder()
-                                        .addModifiers(Modifier.PRIVATE)
-                                        .build()
-                        )
-                subtrees.forEach { it.write(nestedTypeSpecBuilder) }
-                typeSpecBuilder.addType(nestedTypeSpecBuilder.build())
-            }
-        }
-
-        class Leaf(segment: String, val propertyName: String) : TextKeyTree(segment) {
-
-            override fun write(typeSpecBuilder: TypeSpec.Builder) {
-                val stringFieldSpec = FieldSpec
-                        .builder(String::class.java, "${segment}_", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .initializer("\$S", propertyName)
-                        .build()
-                typeSpecBuilder.addField(stringFieldSpec)
-                typeSpecBuilder.addField(
-                        FieldSpec
-                                .builder(textKeyTypeSpec, segment, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                                .initializer("new \$T(\$N)", textKeyTypeSpec, stringFieldSpec)
-                                .build()
-                )
-            }
-        }
+    private fun TypeSpec.Builder.addGeneratedAnnotation(): TypeSpec.Builder {
+        val annotation = AnnotationSpec
+                .builder(Generated::class.java)
+                .addMember("value", "\$S", PropertyKeyGeneratorPlugin::class.java.name)
+                .build()
+        return addAnnotation(annotation)
     }
 
-    private data class TextKey(val propertyName: String, val propertyNameSegments: List<String>) {
-        constructor(propertyName: String) : this(propertyName, propertyName.split(".").toList())
+    private fun TypeSpec.Builder.addDeclarations(node: PropertyKeyTree): TypeSpec.Builder {
+        if (node is PropertyKeyTree.InternalNode && node.path != null) {
+            addKeyDeclaration(segment = spec.pathVariableName, propertyKeyValue = node.path)
+        }
+        node.children.forEach { (segment, childNode) ->
+            when (childNode) {
+                is PropertyKeyTree.LeafNode -> addKeyDeclaration(segment = segment, propertyKeyValue = childNode.propertyKey.value)
+                is PropertyKeyTree.InternalNode -> addChildClassDeclaration(segment, childNode)
+            }
+        }
+        return this
+    }
+
+    private fun TypeSpec.Builder.addKeyDeclaration(segment: String, propertyKeyValue: String): TypeSpec.Builder {
+        val wrapperClass = spec.wrapperClass
+        val stringFieldName = when (wrapperClass) {
+            null -> segment
+            else -> "${segment}_"
+        }
+        val stringField = FieldSpec
+                .builder(String::class.java, stringFieldName, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .initializer("\$S", propertyKeyValue)
+                .build()
+        addField(stringField)
+        if (wrapperClass != null) {
+            val wrapperClassName = ClassName.get(wrapperClass.packageName, wrapperClass.className)
+            val factoryMethodName = wrapperClass.factoryMethod
+            val initializerFormat = when {
+                factoryMethodName != null -> "\$T.$factoryMethodName(\$N)"
+                else -> "new \$T(\$N)"
+            }
+            val wrapperField = FieldSpec
+                    .builder(wrapperClassName, segment, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                    .initializer(initializerFormat, wrapperClassName, stringField)
+                    .build()
+            addField(wrapperField)
+        }
+        return this
+    }
+
+    private fun TypeSpec.Builder.addChildClassDeclaration(segment: String, node: PropertyKeyTree): TypeSpec.Builder {
+        val typeBuilder = TypeSpec
+                .classBuilder(ClassName.get(spec.packageName, segment))
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addPrivateConstructor()
+                .addDeclarations(node)
+        return addType(typeBuilder.build())
     }
 
 }

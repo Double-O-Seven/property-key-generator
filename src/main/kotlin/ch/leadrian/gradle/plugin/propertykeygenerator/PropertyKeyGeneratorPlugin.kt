@@ -2,39 +2,36 @@ package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.regex.Pattern
 
 open class PropertyKeyGeneratorPlugin : Plugin<Project> {
 
     companion object {
 
-        const val GENERATED_SOURCE_DIRECTORY = "generated-src/main/java"
-
-        val STRINGS_FILE_PATTERN: Pattern = Pattern.compile("strings(_[a-z]{2}(_[A-Z]{2})?)?\\.properties")
+        const val GENERATED_SOURCE_DIRECTORY = "generated/sources/propertyKeyGenerator/java"
 
     }
 
     override fun apply(project: Project) {
         applyJavaPlugin(project)
-        createExtension(project)
-        configureTask(project)
+        val extension = createExtension(project)
+        project.afterEvaluate {
+            createTasks(extension, project)
+        }
         configureSourceSets(project)
     }
 
-    private fun createExtension(project: Project) {
-        project.extensions.create("textKeyGenerator", PropertyKeyGeneratorPluginExtension::class.java)
+    private fun applyJavaPlugin(project: Project) {
+        project.pluginManager.apply(JavaPlugin::class.java)
     }
 
-    private fun configureTask(project: Project) {
-        val generateTextKeysTask = project.tasks.create("generateTextKeys", GeneratePropertyKeys::class.java)
-        project.tasks.withType(JavaCompile::class.java) { it.dependsOn(generateTextKeysTask) }
-        project.tasks.withType(KotlinCompile::class.java) { it.dependsOn(generateTextKeysTask) }
-    }
+    private fun createExtension(project: Project): PropertyKeyGeneratorPluginExtension =
+            project.extensions.create("propertyKeyGenerator", PropertyKeyGeneratorPluginExtension::class.java)
 
     private fun configureSourceSets(project: Project) {
         project
@@ -46,7 +43,20 @@ open class PropertyKeyGeneratorPlugin : Plugin<Project> {
                 ?.srcDir(project.buildDir.resolve(GENERATED_SOURCE_DIRECTORY))
     }
 
-    private fun applyJavaPlugin(project: Project) {
-        project.pluginManager.apply(JavaPlugin::class.java)
+    private fun createTasks(extension: PropertyKeyGeneratorPluginExtension, project: Project) {
+        val parentTask: Task = project.tasks.create("generatePropertyKeys")
+        project.tasks.withType(JavaCompile::class.java) { it.dependsOn(parentTask) }
+        project.tasks.withType(KotlinCompile::class.java) { it.dependsOn(parentTask) }
+        extension.resourceBundles.forEach { resourceBundleConfiguration ->
+            createTask(resourceBundleConfiguration, project, parentTask)
+        }
+    }
+
+    private fun createTask(resourceBundleConfiguration: ResourceBundleConfiguration, project: Project, parentTask: Task) {
+        val bundleName = resourceBundleConfiguration.upperCamelCaseBundleName()
+        project.tasks.create("generate${bundleName}PropertyKeys", GeneratePropertyKeys::class.java) { generatePropertyKeys ->
+            generatePropertyKeys.with(resourceBundleConfiguration)
+            parentTask.dependsOn(generatePropertyKeys)
+        }
     }
 }

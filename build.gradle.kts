@@ -20,9 +20,11 @@ dependencies {
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = kotlinVersion)
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlinVersion)
     implementation(group = "com.squareup", name = "javapoet", version = "1.11.1")
+    implementation(group = "com.google.guava", name = "guava", version = "28.0-jre")
 
     api(gradleApi())
 
+    testImplementation(gradleTestKit())
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = junitVersion)
     testImplementation(group = "org.assertj", name = "assertj-core", version = "3.13.2")
@@ -51,6 +53,7 @@ tasks {
         sourceCompatibility = "1.8"
         kotlinOptions {
             jvmTarget = "1.8"
+            freeCompilerArgs = listOf("-Xjvm-default=compatibility")
         }
     }
 
@@ -58,6 +61,7 @@ tasks {
         sourceCompatibility = "1.8"
         kotlinOptions {
             jvmTarget = "1.8"
+            freeCompilerArgs = listOf("-Xjvm-default=compatibility")
         }
     }
 

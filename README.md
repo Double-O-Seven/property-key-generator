@@ -1,7 +1,7 @@
-﻿[![Build Status](https://travis-ci.org/Double-O-Seven/kamp-textkey-generator.svg?branch=master)](https://travis-ci.org/Double-O-Seven/kamp-textkey-generator)
- [![Gradle Plugins Release](https://img.shields.io/github/tag/Double-O-Seven/kamp-textkey-generator.svg)](https://plugins.gradle.org/plugin/ch.leadrian.samp.kamp.kamp-textkey-generator)
+﻿[![Build Status](https://travis-ci.org/Double-O-Seven/property-key-generator.svg?branch=master)](https://travis-ci.org/Double-O-Seven/property-key-generator)
+ [![Gradle Plugins Release](https://img.shields.io/github/tag/Double-O-Seven/property-key-generator.svg)](https://plugins.gradle.org/plugin/ch.leadrian.property-key-generator)
 
-# Kamp TextKey Generator Gradle Plugin
+# Property Key Generator Gradle Plugin
 
 A simple Gradle plugin that generates `ch.leadrian.samp.kamp.core.api.text.TextKey`s for Kamp.
 
@@ -11,7 +11,7 @@ You may also specify a locale for your properties file. The following examples a
   * `strings.properties`
   * `strings_de_DE.properties`
   * `strings_EN.properties`
-  
+
 If your gamemode has the Java package `com.my.amazing.gamemode`, put your `strings.properties` files into the directory `src/main/resources/com/my/amazing/gamemode`.  The plugin automatically generate a class containing all property keys defined in the files.
 
 Let's assume your `strings.properties` file contains the following properties and is located in the package `com.my.amazing.gamemode`:
@@ -38,7 +38,7 @@ A typical Gradle setup using the plugin will look like this:
 
 ```kotlin
 plugins {
-    id("ch.leadrian.samp.kamp.kamp-textkey-generator") version "1.0.0-rc2"
+    id("ch.leadrian.samp.kamp.property-key-generator") version "1.0.0-rc2"
     // Other plugins
 }
 
