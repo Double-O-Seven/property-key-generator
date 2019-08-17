@@ -10,10 +10,13 @@ The plugin collects all property key from a given resource bundle.
 Given a property key `how.are.you` in a resource bundle `translation`, the plugin will generate code that will allow you to the exact property keys without having to write them out like this:
 ```java
 ResouceBundle translations = ResourceBundle.getBundle("translations", Locale.GERMANY);
-String howAreYou =  translations.getString(Translation.how.are.you)
+String howAreYou =  translations.getString(Translation.how.are.you);
 ```
 
 The plugin can be configured to generate only String constants as well as to generate wrappers for the String constants.
+
+If only String constants are generated, the String constants may be accessed using `Translation.how.are.you`.
+If wrappers are generated, the String values will still be generated with an underscore as suffix, `Translation.how.are.you_` for example, while the wrapper values will be accessible without an underscore.
 
 Tasks and extension
 -------------------
