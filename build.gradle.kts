@@ -86,7 +86,7 @@ gradlePlugin {
 pluginBundle {
     website = "https://github.com/Double-O-Seven/property-key-generator"
     vcsUrl = "https://github.com/Double-O-Seven/property-key-generator"
-    description = "Gradle plugin to property keys from properties files"
+    description = "Gradle plugin to generate property keys from properties files"
     tags = listOf("properties", "property", "key")
 
     (plugins) {
