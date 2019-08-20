@@ -13,7 +13,7 @@ open class PropertyKeyGeneratorPlugin : Plugin<Project> {
 
     companion object {
 
-        const val GENERATED_SOURCE_DIRECTORY = "generated/sources/propertyKeyGenerator/java"
+        const val GENERATED_SOURCE_DIRECTORY = "generated/sources/propertyKeyGenerator/java/main"
 
     }
 
