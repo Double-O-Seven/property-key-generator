@@ -48,6 +48,15 @@ propertyKeyGenerator {
         bundlePackageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
     }
 
+    resourceBundle {
+        bundleName = "NonDefaultConfigurationTest"
+        bundleNameCaseFormat = "UPPER_CAMEL"
+        bundlePackageName = "ch.leadrian.gradle.plugin.propertykeygenerator"
+        outputClassName = "NonDefaultConfigKeys"
+        outputPackageName = "ch.leadrian.gradle.plugin.propertykeygenerator.test"
+        pathVariableName = "CUSTOM_PATH"
+    }
+
 }
 
 tasks {

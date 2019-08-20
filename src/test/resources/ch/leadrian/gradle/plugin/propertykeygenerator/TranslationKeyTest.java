@@ -3,6 +3,8 @@ package ch.leadrian.gradle.plugin.propertykeygenerator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import ch.leadrian.gradle.plugin.propertykeygenerator.test.NonDefaultConfigKeys;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -119,6 +121,37 @@ class TranslationKeyTest {
                     () -> assertThat(StringConstantsTestKeys.fubar.PATH).isEqualTo("fubar"),
                     () -> assertThat(StringConstantsTestKeys.fubar.qux.PATH).isEqualTo("fubar.qux"),
                     () -> assertThat(StringConstantsTestKeys.bar.PATH).isEqualTo("bar")
+            );
+        }
+    }
+
+    @Nested
+    class NonDefaultConfigurationTests {
+
+        @Test
+        void shouldAccessSingleSegmentPropertyKey() {
+            assertThat(NonDefaultConfigKeys.foo).isEqualTo("foo");
+        }
+
+        @Test
+        void shouldAccessSecondLevelPropertyKeys() {
+            assertThat(NonDefaultConfigKeys.bar.baz).isEqualTo("bar.baz");
+        }
+
+        @Test
+        void shouldAccessThirdLevelSiblingPropertyKeys() {
+            assertAll(
+                    () -> assertThat(NonDefaultConfigKeys.fubar.qux.bla).isEqualTo("fubar.qux.bla"),
+                    () -> assertThat(NonDefaultConfigKeys.fubar.qux.blub).isEqualTo("fubar.qux.blub")
+            );
+        }
+
+        @Test
+        void shouldAccessPaths() {
+            assertAll(
+                    () -> assertThat(NonDefaultConfigKeys.fubar.CUSTOM_PATH).isEqualTo("fubar"),
+                    () -> assertThat(NonDefaultConfigKeys.fubar.qux.CUSTOM_PATH).isEqualTo("fubar.qux"),
+                    () -> assertThat(NonDefaultConfigKeys.bar.CUSTOM_PATH).isEqualTo("bar")
             );
         }
     }

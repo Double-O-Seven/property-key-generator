@@ -55,6 +55,10 @@ internal class PropertyKeyGeneratorPluginTest {
                 resourceName = "string-constants-test.properties",
                 file = projectDir.resolve("src/main/resources/ch/leadrian/gradle/plugin/propertykeygenerator/string-constants-test.properties")
         )
+        copyResource(
+                resourceName = "NonDefaultConfigurationTest.properties",
+                file = projectDir.resolve("src/main/resources/ch/leadrian/gradle/plugin/propertykeygenerator/NonDefaultConfigurationTest.properties")
+        )
 
         val buildResult = GradleRunner.create()
                 .withProjectDir(projectDir.toFile())
@@ -65,7 +69,8 @@ internal class PropertyKeyGeneratorPluginTest {
         assertAll(
                 { assertThat(buildResult.task(":generateWrapperClassTestPropertyKeys")?.outcome).isEqualTo(TaskOutcome.SUCCESS) },
                 { assertThat(buildResult.task(":generateFactoryMethodTestPropertyKeys")?.outcome).isEqualTo(TaskOutcome.SUCCESS) },
-                { assertThat(buildResult.task(":generateStringConstantsTestPropertyKeys")?.outcome).isEqualTo(TaskOutcome.SUCCESS) }
+                { assertThat(buildResult.task(":generateStringConstantsTestPropertyKeys")?.outcome).isEqualTo(TaskOutcome.SUCCESS) },
+                { assertThat(buildResult.task(":generateNonDefaultConfigurationTestPropertyKeys")?.outcome).isEqualTo(TaskOutcome.SUCCESS) }
         )
     }
 
