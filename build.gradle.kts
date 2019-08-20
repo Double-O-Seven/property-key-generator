@@ -21,8 +21,7 @@ dependencies {
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlinVersion)
     implementation(group = "com.squareup", name = "javapoet", version = "1.11.1")
     implementation(group = "com.google.guava", name = "guava", version = "28.0-jre")
-
-    api(gradleApi())
+    implementation(gradleApi())
 
     testImplementation(gradleTestKit())
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
