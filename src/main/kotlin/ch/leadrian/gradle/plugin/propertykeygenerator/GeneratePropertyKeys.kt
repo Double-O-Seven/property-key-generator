@@ -19,14 +19,17 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
     @get:Input
     override lateinit var bundleName: String
 
+    @get:Input
+    override lateinit var bundlePackageName: String
+
     @get:[Optional Input]
-    override var className: String? = null
+    override var outputClassName: String? = null
+
+    @get:[Optional Input]
+    override var outputPackageName: String? = null
 
     @get:Input
-    override var resourceBundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
-
-    @get:Input
-    override lateinit var packageName: String
+    override var bundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
 
     @get:[Optional Input]
     override var pattern: String? = null
@@ -49,8 +52,8 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
     internal val outputFile: File
         get() {
             return outputDirectory
-                    .resolve(packageName.replace('.', File.separatorChar))
-                    .resolve("${PropertyKeysClassNameResolver.resolve(this)}.java")
+                    .resolve(resolvedOutputPackageName.replace('.', File.separatorChar))
+                    .resolve("$resolvedOutputClassName.java")
         }
 
     @TaskAction
@@ -72,9 +75,10 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
 
     fun with(spec: PropertyKeyGenerationSpec) {
         bundleName = spec.bundleName
-        className = spec.className
-        resourceBundleNameCaseFormat = spec.resourceBundleNameCaseFormat
-        packageName = spec.packageName
+        bundlePackageName = spec.bundlePackageName
+        outputClassName = spec.outputClassName
+        outputPackageName = spec.outputPackageName
+        bundleNameCaseFormat = spec.bundleNameCaseFormat
         pattern = spec.pattern
         wrapperClass = spec.wrapperClass
         pathVariableName = spec.pathVariableName

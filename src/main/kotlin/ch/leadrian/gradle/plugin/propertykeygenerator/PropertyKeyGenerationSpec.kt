@@ -17,11 +17,13 @@ interface PropertyKeyGenerationSpec {
 
     var bundleName: String
 
-    var className: String?
+    var bundlePackageName: String
 
-    var resourceBundleNameCaseFormat: Any
+    var outputClassName: String?
 
-    var packageName: String
+    var outputPackageName: String?
+
+    var bundleNameCaseFormat: Any
 
     var pattern: String?
 
@@ -47,4 +49,10 @@ interface PropertyKeyGenerationSpec {
 }
 
 internal fun PropertyKeyGenerationSpec.upperCamelCaseBundleName(): String =
-        CaseFormat.valueOf(resourceBundleNameCaseFormat.toString()).to(CaseFormat.UPPER_CAMEL, bundleName)!!
+        CaseFormat.valueOf(bundleNameCaseFormat.toString()).to(CaseFormat.UPPER_CAMEL, bundleName)
+
+internal val PropertyKeyGenerationSpec.resolvedOutputClassName: String
+    get() = outputClassName ?: upperCamelCaseBundleName() + "Keys"
+
+internal val PropertyKeyGenerationSpec.resolvedOutputPackageName: String
+    get() = outputPackageName ?: bundlePackageName

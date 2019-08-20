@@ -24,7 +24,7 @@ version = '1.0.0'
 propertyKeyGenerator {
 
     resourceBundle('wrapper-class-test') {
-        packageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
+        bundlePackageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
 
         wrapperClass {
             packageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
@@ -34,7 +34,7 @@ propertyKeyGenerator {
 
     resourceBundle {
         bundleName = 'factory-method-test'
-        packageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
+        bundlePackageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
 
         wrapperClass {
             packageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
@@ -45,7 +45,7 @@ propertyKeyGenerator {
 
     resourceBundle {
         bundleName = 'string-constants-test'
-        packageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
+        bundlePackageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
     }
 
 }

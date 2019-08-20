@@ -4,11 +4,13 @@ open class ResourceBundleConfiguration : PropertyKeyGenerationSpec {
 
     override lateinit var bundleName: String
 
-    override var className: String? = null
+    override lateinit var bundlePackageName: String
 
-    override var resourceBundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
+    override var outputClassName: String? = null
 
-    override lateinit var packageName: String
+    override var outputPackageName: String? = null
+
+    override var bundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
 
     override var pattern: String? = null
 

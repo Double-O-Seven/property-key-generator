@@ -7,7 +7,7 @@ internal object PropertiesFilesResolver {
 
     fun resolve(directories: Set<File>, spec: PropertyKeyGenerationSpec): List<File> {
         val pattern = getPattern(spec)
-        return directories.map { it.resolve(spec.packageName.replace('.', File.separatorChar)) }
+        return directories.map { it.resolve(spec.bundlePackageName.replace('.', File.separatorChar)) }
                 .filter { it.exists() && it.isDirectory }
                 .flatMap { it.listFiles()?.toList().orEmpty() }
                 .filter { it.isFile && pattern.matcher(it.name).matches() }

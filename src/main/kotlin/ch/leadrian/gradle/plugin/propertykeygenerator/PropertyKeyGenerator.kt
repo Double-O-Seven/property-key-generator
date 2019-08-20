@@ -18,14 +18,14 @@ internal class PropertyKeyGenerator(
 
     fun generatePropertyKeyRootClass(writer: Writer) {
         val rootClass = TypeSpec
-                .classBuilder(ClassName.get(spec.packageName, PropertyKeysClassNameResolver.resolve(spec)))
+                .classBuilder(ClassName.get(spec.resolvedOutputPackageName, spec.resolvedOutputClassName))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addPrivateConstructor()
                 .addGeneratedAnnotation()
                 .addDeclarations(propertyKeyTree)
                 .build()
         JavaFile
-                .builder(spec.packageName, rootClass)
+                .builder(spec.resolvedOutputPackageName, rootClass)
                 .skipJavaLangImports(true)
                 .build()
                 .writeTo(writer)
@@ -85,7 +85,7 @@ internal class PropertyKeyGenerator(
 
     private fun TypeSpec.Builder.addChildClassDeclaration(segment: String, node: PropertyKeyTree): TypeSpec.Builder {
         val typeBuilder = TypeSpec
-                .classBuilder(ClassName.get(spec.packageName, segment))
+                .classBuilder(ClassName.get(spec.resolvedOutputPackageName, segment))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .addPrivateConstructor()
                 .addDeclarations(node)
