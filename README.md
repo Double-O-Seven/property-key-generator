@@ -37,7 +37,7 @@ propertyKeyGenerator {
 
     // Resource bundle named translations in package org.mycompany.i18n
     resourceBundle("translations") {
-        packageName = "org.mycompany.i18n"
+        bundlePackageName = "org.mycompany.i18n"
 
         // Generate the property keys using a wrapper class in addition to Strings, using a single String-parameter constructor
         wrapperClass {
@@ -145,7 +145,7 @@ propertyKeyGenerator {
 
     // Resource bundle named translations in package org.mycompany.i18n
     resourceBundle("translations") {
-        packageName = "org.mycompany.i18n"
+        bundlePackageName = "org.mycompany.i18n"
 
         // Don't generate wrapper classes, only generate plain String constants
     }
@@ -171,9 +171,11 @@ propertyKeyGenerator {
     resourceBundle("translations") {
         // Has the same effect as "translations" above
         bundleName = "translations"
-        packageName = "org.mycompany.i18n"
+        bundlePackageName = "org.mycompany.i18n"
         // Root class containing the String constants, by default it is "<upper-case resouce bundleName>Keys"
-        className = "MyTranslations"
+        outputClassName = "MyTranslations"
+        // Package of the output class. If not set, the bundlePackageName will be used.
+        outputPackageName = "org.mycompany.i18n.generated"
         // Override the default .properties lookup and only look in strings.properties and translations.properties for example.
         // By default, all .properties files in specified package belonging to the specified resource bundle are match, for example:
         // translations.properties, transations_en_US.properties, translations_en.properties, translations_de_DE.properties
@@ -182,7 +184,7 @@ propertyKeyGenerator {
         // Case format used for naming the resource bundles, by default LOWER_HYPHEN (kebab-case) is used.
         // Applicable values are LOWER_HYPHEN, LOWER_UNDERSCORE, LOWER_CAMEL, UPPER_CAMEL, UPPER_UNDERSCORE.
         // See com.google.common.base.CaseFormat from Guava for more information.
-        resourceBundleNameCaseFormat = "UPPER_CAMEL"
+        bundleNameCaseFormat = "UPPER_CAMEL"
 
         // Generates a public static final constant for each 'segment' of a property key, for example:
         // For the property key "foo.bar.baz", a constant value containing "foo" and "foo.bar" will be generated.
