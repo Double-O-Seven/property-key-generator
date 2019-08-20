@@ -1,1 +1,1 @@
-rootProject.name = "property-textkey-generator"
+rootProject.name = "property-key-generator"
