@@ -29,7 +29,7 @@ A typical configuration may look like the following (using Kotlin Gradle DSL):
 
 ```kotlin
 plugins {
-    id("ch.leadrian.property-key-generator") version "1.0.0-rc2"
+    id("ch.leadrian.property-key-generator") version "2.0.0"
     // Other plugins
 }
 
@@ -137,7 +137,7 @@ A minimal configuration may look like the following:
 
 ```kotlin
 plugins {
-    id("ch.leadrian.property-key-generator") version "1.0.0-rc2"
+    id("ch.leadrian.property-key-generator") version "2.0.0"
     // Other plugins
 }
 
@@ -162,7 +162,7 @@ A full configuration may look like the following:
 
 ```kotlin
 plugins {
-    id("ch.leadrian.property-key-generator") version "1.0.0-rc2"
+    id("ch.leadrian.property-key-generator") version "2.0.0"
     // Other plugins
 }
 
