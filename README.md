@@ -194,6 +194,16 @@ propertyKeyGenerator {
         // By default the name of the constant will be PATH. Use the following property to override the name.
         pathVariableName = "CUSTOM_PATH"
 
+        // Defines the prefix of the string value of the property keys. The configuration is only effective if a wrapper class
+        // has been declared. Given a property key "foo.bar.baz", a prefix defined a "string_" and a declared wrapper class,
+        // the name of the string variable will be "string_baz".
+        stringValuePrefix = ""
+
+        // Defines the suffix of the string value of the property keys. The configuration is only effective if a wrapper class
+        // has been declared. Given a property key "foo.bar.baz", a suffix defined a "_string" and a declared wrapper class,
+        // the name of the string variable will be "baz_string".
+        stringValueSuffix = "_"
+
         // This configuration is optional, but may be applied only once.
         // Generate the property keys using a wrapper class in addition to Strings, using a single String-parameter constructor
         wrapperClass {
