@@ -13,6 +13,10 @@ interface PropertyKeyGenerationSpec {
 
         const val DEFAULT_PATH_VARIABLE_NAME = "PATH"
 
+        const val DEFAULT_STRING_VALUE_PREFIX = ""
+
+        const val DEFAULT_STRING_VALUE_SUFFIX = "_"
+
     }
 
     var bundleName: String
@@ -30,6 +34,10 @@ interface PropertyKeyGenerationSpec {
     var wrapperClass: WrapperClassConfiguration?
 
     var pathVariableName: String
+
+    var stringValuePrefix: String
+
+    var stringValueSuffix: String
 
     @JvmDefault
     fun wrapperClass(action: Action<in WrapperClassConfiguration>) {

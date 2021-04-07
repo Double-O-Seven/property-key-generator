@@ -18,4 +18,8 @@ open class ResourceBundleConfiguration : PropertyKeyGenerationSpec {
 
     override var pathVariableName: String = PropertyKeyGenerationSpec.DEFAULT_PATH_VARIABLE_NAME
 
+    override var stringValuePrefix: String = PropertyKeyGenerationSpec.DEFAULT_STRING_VALUE_PREFIX
+
+    override var stringValueSuffix: String = PropertyKeyGenerationSpec.DEFAULT_STRING_VALUE_SUFFIX
+
 }

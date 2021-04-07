@@ -40,6 +40,12 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
     @get:Input
     override var pathVariableName: String = PropertyKeyGenerationSpec.DEFAULT_PATH_VARIABLE_NAME
 
+    @get:Input
+    override var stringValuePrefix: String = PropertyKeyGenerationSpec.DEFAULT_STRING_VALUE_PREFIX
+
+    @get:Input
+    override var stringValueSuffix: String = PropertyKeyGenerationSpec.DEFAULT_STRING_VALUE_SUFFIX
+
     @get:OutputDirectory
     internal val outputDirectory: File
         get() = project.buildDir.resolve(PropertyKeyGeneratorPlugin.GENERATED_SOURCE_DIRECTORY)
@@ -82,6 +88,8 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
         pattern = spec.pattern
         wrapperClass = spec.wrapperClass
         pathVariableName = spec.pathVariableName
+        stringValuePrefix = spec.stringValuePrefix
+        stringValueSuffix = spec.stringValueSuffix
     }
 
 }

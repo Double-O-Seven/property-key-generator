@@ -60,7 +60,7 @@ internal class PropertyKeyGenerator(
         val wrapperClass = spec.wrapperClass
         val stringFieldName = when (wrapperClass) {
             null -> segment
-            else -> "${segment}_"
+            else -> "${spec.stringValuePrefix}$segment${spec.stringValueSuffix}"
         }
         val stringField = FieldSpec
                 .builder(String::class.java, stringFieldName, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
