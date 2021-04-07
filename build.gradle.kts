@@ -1,34 +1,33 @@
 import groovy.lang.Closure
 
 plugins {
-    kotlin("jvm") version "1.3.41"
     `java-library`
     `java-gradle-plugin`
-    id("com.gradle.plugin-publish") version "0.10.1"
-    id("org.jetbrains.dokka") version "0.9.18"
-    id("com.palantir.git-version") version "0.12.0-rc2"
+    kotlin("jvm") version "1.4.20"
+    id("com.gradle.plugin-publish") version "0.14.0"
+    id("com.palantir.git-version") version "0.12.3"
+    id("org.jetbrains.dokka") version "1.4.20"
 }
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
-val kotlinVersion = "1.3.41"
-val junitVersion = "5.5.1"
-
 dependencies {
-    implementation(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = kotlinVersion)
-    implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlinVersion)
-    implementation(group = "com.squareup", name = "javapoet", version = "1.11.1")
-    implementation(group = "com.google.guava", name = "guava", version = "28.0-jre")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("gradle-plugin"))
+    implementation(group = "com.squareup", name = "javapoet", version = "1.13.0")
+    implementation(group = "com.google.guava", name = "guava", version = "30.1.1-jre")
     implementation(gradleApi())
 
+    testImplementation(platform("org.junit:junit-bom:5.7.1"))
     testImplementation(gradleTestKit())
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = junitVersion)
-    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.13.2")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params")
+    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.19.0")
 
-    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)
+    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine")
 }
 
 val gitVersion: Closure<String> by extra
@@ -37,14 +36,9 @@ version = gitVersion()
 
 group = "ch.leadrian.propertykeygenerator"
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
-tasks.register<Jar>("javadocJar") {
-    from(tasks.dokka)
-    archiveClassifier.set("javadoc")
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
 tasks {
@@ -68,8 +62,8 @@ tasks {
         useJUnitPlatform()
     }
 
-    dokka {
-        reportUndocumented = false
+    named<Jar>("javadocJar") {
+        from(dokkaJavadoc)
     }
 }
 
