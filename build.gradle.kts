@@ -19,10 +19,8 @@ dependencies {
     implementation(kotlin("gradle-plugin"))
     implementation(group = "com.squareup", name = "javapoet", version = "1.13.0")
     implementation(group = "com.google.guava", name = "guava", version = "30.1.1-jre")
-    implementation(gradleApi())
 
     testImplementation(platform("org.junit:junit-bom:5.7.1"))
-    testImplementation(gradleTestKit())
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api")
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params")
     testImplementation(group = "org.assertj", name = "assertj-core", version = "3.19.0")
