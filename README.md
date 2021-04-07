@@ -1,5 +1,5 @@
-﻿[![Build Status](https://travis-ci.org/Double-O-Seven/property-key-generator.svg?branch=master)](https://travis-ci.org/Double-O-Seven/property-key-generator)
- [![Gradle Plugins Release](https://img.shields.io/github/tag/Double-O-Seven/property-key-generator.svg)](https://plugins.gradle.org/plugin/ch.leadrian.property-key-generator)
+﻿[![Java CI with Gradle](https://github.com/Double-O-Seven/property-key-generator/actions/workflows/gradle.yml/badge.svg)](https://github.com/Double-O-Seven/property-key-generator/actions/workflows/gradle.yml)
+[![Gradle Plugins Release](https://img.shields.io/github/tag/Double-O-Seven/property-key-generator.svg)](https://plugins.gradle.org/plugin/ch.leadrian.property-key-generator)
 
 # Property Key Generator Gradle Plugin
 
