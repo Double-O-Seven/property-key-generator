@@ -1,15 +1,14 @@
 package ch.leadrian.gradle.plugin.propertykeygenerator;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import ch.leadrian.gradle.plugin.propertykeygenerator.test.NonDefaultConfigKeys;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TranslationKeyTest {
 
@@ -107,6 +106,55 @@ class TranslationKeyTest {
                     () -> assertThat(FactoryMethodTestKeys.fubar.qux.PATH_).isEqualTo("fubar.qux"),
                     () -> assertThat(FactoryMethodTestKeys.bar.PATH.value).isEqualTo("bar"),
                     () -> assertThat(FactoryMethodTestKeys.bar.PATH_).isEqualTo("bar")
+            );
+        }
+    }
+
+    @Nested
+    class FactoryMethodTests2 {
+
+        @Test
+        void shouldGenerateResourceBundle() {
+            Throwable caughtThrowable = catchThrowable(() -> FactoryMethodTest2Keys.getResourceBundle(Locale.GERMANY));
+
+            assertThat(caughtThrowable).isNull();
+        }
+
+        @Test
+        void shouldAccessSingleSegmentPropertyKey() {
+            assertAll(
+                    () -> assertThat(FactoryMethodTest2Keys.foo.value).isEqualTo("foo"),
+                    () -> assertThat(FactoryMethodTest2Keys.foo_).isEqualTo("foo")
+            );
+        }
+
+        @Test
+        void shouldAccessSecondLevelPropertyKeys() {
+            assertAll(
+                    () -> assertThat(FactoryMethodTest2Keys.bar.baz.value).isEqualTo("bar.baz"),
+                    () -> assertThat(FactoryMethodTest2Keys.bar.baz_).isEqualTo("bar.baz")
+            );
+        }
+
+        @Test
+        void shouldAccessThirdLevelSiblingPropertyKeys() {
+            assertAll(
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.qux.bla.value).isEqualTo("fubar.qux.bla"),
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.qux.bla_).isEqualTo("fubar.qux.bla"),
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.qux.blub.value).isEqualTo("fubar.qux.blub"),
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.qux.blub_).isEqualTo("fubar.qux.blub")
+            );
+        }
+
+        @Test
+        void shouldAccessPaths() {
+            assertAll(
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.PATH.value).isEqualTo("fubar"),
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.PATH_).isEqualTo("fubar"),
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.qux.PATH.value).isEqualTo("fubar.qux"),
+                    () -> assertThat(FactoryMethodTest2Keys.fubar.qux.PATH_).isEqualTo("fubar.qux"),
+                    () -> assertThat(FactoryMethodTest2Keys.bar.PATH.value).isEqualTo("bar"),
+                    () -> assertThat(FactoryMethodTest2Keys.bar.PATH_).isEqualTo("bar")
             );
         }
     }

@@ -78,13 +78,22 @@ internal class PropertyKeyGenerator(
         if (wrapperClass != null) {
             val wrapperClassName = ClassName.get(wrapperClass.packageName, wrapperClass.className)
             val factoryMethodName = wrapperClass.factoryMethod
+            val factoryClassName = if (wrapperClass.factoryClassName != null && wrapperClass.factoryPackageName != null) {
+                ClassName.get(wrapperClass.factoryPackageName, wrapperClass.factoryClassName)
+            } else {
+                null
+            }
+            val creatingClassName = when {
+                factoryMethodName != null && factoryClassName != null -> factoryClassName
+                else -> wrapperClassName
+            }
             val initializerFormat = when {
                 factoryMethodName != null -> "\$T.$factoryMethodName(\$N)"
                 else -> "new \$T(\$N)"
             }
             val wrapperField = FieldSpec
                     .builder(wrapperClassName, segment, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                    .initializer(initializerFormat, wrapperClassName, stringField)
+                    .initializer(initializerFormat, creatingClassName, stringField)
                     .build()
             addField(wrapperField)
         }

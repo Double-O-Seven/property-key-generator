@@ -18,7 +18,7 @@ internal class PropertyKeyGeneratorPluginTest {
 
     @BeforeEach
     fun setUp(@TempDir tempDir: Path) {
-        projectDir = tempDir
+        projectDir = Files.createTempDirectory("PropertyKeyGeneratorPluginTest")
     }
 
     @ParameterizedTest
@@ -30,6 +30,10 @@ internal class PropertyKeyGeneratorPluginTest {
         copyResource(
                 resourceName = "TranslationKey.java",
                 file = projectDir.resolve("src/main/java/ch/leadrian/gradle/plugin/propertykeygenerator/TranslationKey.java")
+        )
+        copyResource(
+                resourceName = "TranslationKeys.java",
+                file = projectDir.resolve("src/main/java/ch/leadrian/gradle/plugin/propertykeygenerator/TranslationKeys.java")
         )
         copyResource(
                 resourceName = "TranslationKeyTest.java",
@@ -50,6 +54,10 @@ internal class PropertyKeyGeneratorPluginTest {
         copyResource(
                 resourceName = "factory-method-test.properties",
                 file = projectDir.resolve("src/main/resources/ch/leadrian/gradle/plugin/propertykeygenerator/factory-method-test.properties")
+        )
+        copyResource(
+                resourceName = "factory-method-test-2.properties",
+                file = projectDir.resolve("src/main/resources/ch/leadrian/gradle/plugin/propertykeygenerator/factory-method-test-2.properties")
         )
         copyResource(
                 resourceName = "string-constants-test.properties",

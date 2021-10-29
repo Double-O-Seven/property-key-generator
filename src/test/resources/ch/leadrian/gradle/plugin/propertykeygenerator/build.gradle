@@ -44,6 +44,19 @@ propertyKeyGenerator {
     }
 
     resourceBundle {
+        bundleName = "factory-method-test-2"
+        bundlePackageName = "ch.leadrian.gradle.plugin.propertykeygenerator"
+
+        wrapperClass {
+            packageName = "ch.leadrian.gradle.plugin.propertykeygenerator"
+            className = "TranslationKey"
+            factoryMethod = "from"
+            factoryClassName = "TranslationKeys"
+            factoryPackageName = "ch.leadrian.gradle.plugin.propertykeygenerator"
+        }
+    }
+
+    resourceBundle {
         bundleName = 'string-constants-test'
         bundlePackageName = 'ch.leadrian.gradle.plugin.propertykeygenerator'
     }

@@ -13,4 +13,10 @@ open class WrapperClassConfiguration {
 
     @get:[Optional Input]
     var factoryMethod: String? = null
+
+    @get:[Optional Input]
+    var factoryClassName: String? = null
+
+    @get:[Optional Input]
+    var factoryPackageName: String? = null
 }
