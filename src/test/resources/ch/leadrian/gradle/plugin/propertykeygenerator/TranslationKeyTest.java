@@ -1,6 +1,7 @@
 package ch.leadrian.gradle.plugin.propertykeygenerator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import ch.leadrian.gradle.plugin.propertykeygenerator.test.NonDefaultConfigKeys;
@@ -8,10 +9,19 @@ import ch.leadrian.gradle.plugin.propertykeygenerator.test.NonDefaultConfigKeys;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 class TranslationKeyTest {
 
     @Nested
     class WrapperClassTests {
+
+        @Test
+        void shouldGenerateResourceBundle() {
+            Throwable caughtThrowable = catchThrowable(() -> WrapperClassTestKeys.getResourceBundle(Locale.GERMANY));
+
+            assertThat(caughtThrowable).isNull();
+        }
 
         @Test
         void shouldAccessSingleSegmentPropertyKey() {
@@ -56,6 +66,13 @@ class TranslationKeyTest {
     class FactoryMethodTests {
 
         @Test
+        void shouldGenerateResourceBundle() {
+            Throwable caughtThrowable = catchThrowable(() -> FactoryMethodTestKeys.getResourceBundle(Locale.GERMANY));
+
+            assertThat(caughtThrowable).isNull();
+        }
+
+        @Test
         void shouldAccessSingleSegmentPropertyKey() {
             assertAll(
                     () -> assertThat(FactoryMethodTestKeys.foo.value).isEqualTo("foo"),
@@ -98,6 +115,13 @@ class TranslationKeyTest {
     class StringConstantTests {
 
         @Test
+        void shouldGenerateResourceBundle() {
+            Throwable caughtThrowable = catchThrowable(() -> StringConstantsTestKeys.getResourceBundle(Locale.GERMANY));
+
+            assertThat(caughtThrowable).isNull();
+        }
+
+        @Test
         void shouldAccessSingleSegmentPropertyKey() {
             assertThat(StringConstantsTestKeys.foo).isEqualTo("foo");
         }
@@ -127,6 +151,13 @@ class TranslationKeyTest {
 
     @Nested
     class NonDefaultConfigurationTests {
+
+        @Test
+        void shouldGenerateResourceBundle() {
+            Throwable caughtThrowable = catchThrowable(() -> NonDefaultConfigKeys.getResourceBundle(Locale.GERMANY));
+
+            assertThat(caughtThrowable).isNull();
+        }
 
         @Test
         void shouldAccessSingleSegmentPropertyKey() {

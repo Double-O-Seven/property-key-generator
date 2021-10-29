@@ -12,6 +12,8 @@ open class ResourceBundleConfiguration : PropertyKeyGenerationSpec {
 
     override var bundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
 
+    override var resourceBundleMethodName: String? = "getResourceBundle"
+
     override var pattern: String? = null
 
     override var wrapperClass: WrapperClassConfiguration? = null

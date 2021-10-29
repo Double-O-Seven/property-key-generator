@@ -32,6 +32,9 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
     override var bundleNameCaseFormat: Any = PropertyKeyGenerationSpec.DEFAULT_RESOURCE_BUNDLE_CASE_FORMAT
 
     @get:[Optional Input]
+    override var resourceBundleMethodName: String? = null
+
+    @get:[Optional Input]
     override var pattern: String? = null
 
     @get:[Optional Nested]
@@ -85,6 +88,7 @@ open class GeneratePropertyKeys : DefaultTask(), PropertyKeyGenerationSpec {
         outputClassName = spec.outputClassName
         outputPackageName = spec.outputPackageName
         bundleNameCaseFormat = spec.bundleNameCaseFormat
+        resourceBundleMethodName = spec.resourceBundleMethodName
         pattern = spec.pattern
         wrapperClass = spec.wrapperClass
         pathVariableName = spec.pathVariableName

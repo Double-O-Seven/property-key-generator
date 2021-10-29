@@ -1,14 +1,9 @@
 package ch.leadrian.gradle.plugin.propertykeygenerator
 
 import ch.leadrian.gradle.plugin.propertykeygenerator.model.PropertyKeyTree
-import com.squareup.javapoet.AnnotationSpec
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.FieldSpec
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.MethodSpec
-import com.squareup.javapoet.TypeSpec
+import com.squareup.javapoet.*
 import java.io.Writer
-import javax.annotation.Generated
+import java.util.*
 import javax.lang.model.element.Modifier
 
 internal class PropertyKeyGenerator(
@@ -17,11 +12,21 @@ internal class PropertyKeyGenerator(
 ) {
 
     fun generatePropertyKeyRootClass(writer: Writer) {
+        val rootClassName = ClassName.get(spec.resolvedOutputPackageName, spec.resolvedOutputClassName)
         val rootClass = TypeSpec
-                .classBuilder(ClassName.get(spec.resolvedOutputPackageName, spec.resolvedOutputClassName))
+                .classBuilder(rootClassName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addPrivateConstructor()
-                .addGeneratedAnnotation()
+                .apply {
+                    val methodName = spec.resourceBundleMethodName
+                    if (methodName != null) {
+                        addGetResourceBundleFunction(
+                                bundleName = "${spec.bundlePackageName}.${spec.bundleName}",
+                                methodName = methodName,
+                                rootClassName = rootClassName
+                        )
+                    }
+                }
                 .addDeclarations(propertyKeyTree)
                 .build()
         JavaFile
@@ -35,12 +40,15 @@ internal class PropertyKeyGenerator(
         return addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
     }
 
-    private fun TypeSpec.Builder.addGeneratedAnnotation(): TypeSpec.Builder {
-        val annotation = AnnotationSpec
-                .builder(Generated::class.java)
-                .addMember("value", "\$S", PropertyKeyGeneratorPlugin::class.java.name)
+    private fun TypeSpec.Builder.addGetResourceBundleFunction(bundleName: String, methodName: String, rootClassName: ClassName): TypeSpec.Builder {
+        val localeParameter = ParameterSpec.builder(Locale::class.java, "locale").build()
+        val methodSpec = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(localeParameter)
+                .addCode("return \$T.getBundle(\$S, locale, \$T.class.getClassLoader());", ResourceBundle::class.java, bundleName, rootClassName)
+                .returns(ResourceBundle::class.java)
                 .build()
-        return addAnnotation(annotation)
+        return addMethod(methodSpec)
     }
 
     private fun TypeSpec.Builder.addDeclarations(node: PropertyKeyTree): TypeSpec.Builder {

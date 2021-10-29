@@ -29,6 +29,8 @@ interface PropertyKeyGenerationSpec {
 
     var bundleNameCaseFormat: Any
 
+    var resourceBundleMethodName: String?
+
     var pattern: String?
 
     var wrapperClass: WrapperClassConfiguration?

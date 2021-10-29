@@ -62,10 +62,8 @@ The property keys will be generated as follows:
 ```java
 package org.mycompany.i18n;
 
-import javax.annotation.Generated;
 import org.mycompany.i18n.model.TranslationKey;
 
-@Generated("ch.leadrian.gradle.plugin.propertykeygenerator.PropertyKeyGeneratorPlugin")
 public final class TranslationsKeys {
     public static final String hi_ = "hi";
 
